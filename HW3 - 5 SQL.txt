@@ -1,0 +1,43 @@
+1. 
+SELECT count (customerID) 
+FROM Customers 
+where country= "Germany" ;
+
+2. 
+SELECT count(CustomerID) 
+FROM Customers 
+where CustomerName like '%e';
+
+3. 
+INSERT INTO Customers (CustomerID, CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES (92, "RedPanda", "Julia Kh", "Baltiskaya str.", "Novosibirsk", "355000", "Russia");
+
+4. 
+Update Customers 
+SET ContactName = 'Julia' 
+where CustomerID = 92;
+
+5. 
+DELETE FROM Customers
+WHERE City = "Nantes";
+
+6. 
+SELECT Orders.OrderID
+FROM Orders
+INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+where Employees.FirstName = "Steven";
+
+Result:
+Number of Records: 11
+OrderID
+10248
+10254
+10269
+10297
+10320
+10333
+10358
+10359
+10372
+10378
+10397

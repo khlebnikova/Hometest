@@ -1,0 +1,94 @@
+# -*- coding: utf-8 -*-
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoAlertPresentException
+import unittest, time, re
+
+class Testy(unittest.TestCase):
+	# устанавливаем переменные
+    def setUp(self):
+		# создается элемент класса Firefox WebDriver
+		self.driver = webdriver.Firefox() 
+		
+		# устанавливаем время поска элемента
+        self.driver.implicitly_wait(30)
+		
+		# устанавливается начальная страница https://github.com/
+        self.base_url = "https://github.com/" 
+		
+		# нет ошибок
+        self.verificationErrors = [] 
+		
+		# принимаем всплывающее уведомление
+        self.accept_next_alert = True 
+    
+    def test_y(self):
+        driver = self.driver
+		
+		# к начальной странице дописываем адрес результата поиска и переходим на нее
+        driver.get(self.base_url + "/search?utf8=%E2%9C%93&q=selenium") 
+		
+		# находим ссылку с текстом на странице и нажимаем на него
+        driver.find_element_by_link_text("SeleniumHQ/selenium").click() 
+		
+		# находим элемент по расположению и нажимаем на него
+        driver.find_element_by_xpath("//div[@id='js-repo-pjax-container']/div/div[2]/nav/span[2]/a/span").click() 
+		
+		# находим элемент по расположению и нажимаем на него
+        driver.find_element_by_xpath("//a[contains(@href, '/SeleniumHQ/selenium/issues/3124')]").click() 
+		
+		# убеждаемся, что элемент присутствует на странице
+        self.assertTrue(self.is_element_present(By.LINK_TEXT, "http://localhost:40139/session/2f536599-92e4-49ad-aeee-284602e98973/screenshot")) 
+    
+    # элемент присутствует на странице
+	def is_element_present(self, how, what): 
+	
+		# найти элемент
+        try: self.driver.find_element(by=how, value=what) 
+		
+		# за иключением если этого элемента нет
+        except NoSuchElementException as e: return False 
+        return True 
+    
+	# если есть всплывающее окно
+    def is_alert_present(self): 
+	
+		# перевести таргет на всплывающее окно
+        try: self.driver.switch_to_alert() 
+		
+		# за исключением если всплывающего окна нет
+        except NoAlertPresentException as e: return False 
+        return True
+    
+	# закрыть всплывающее окно и посмотреть его текст
+    def close_alert_and_get_its_text(self): 
+        try:
+			# перевести таргет на всплывающее окно
+            alert = self.driver.switch_to_alert() 
+			
+			# ввоб переменной с текстом всплывающего окна
+            alert_text = alert.text 
+			
+			# если принимаем всплывающее уведомление
+            if self.accept_next_alert:		
+			
+				# принять
+                alert.accept() 
+            else:
+				# отклонить
+                alert.dismiss() 
+				
+			# вернуть текст всплывающего уведомления
+            return alert_text 
+        finally: self.accept_next_alert = True
+    
+	# выход
+    def tearDown(self): 
+        self.driver.quit()
+        self.assertEqual([], self.verificationErrors)
+
+if __name__ == "__main__":
+    unittest.main()
